@@ -46,14 +46,14 @@ const server = restify.createServer({
 })
 
 const cors = corsMiddleware({
- preflightMaxAge: 5, //Optional
- origins: ['http://localhost:*'],
- allowHeaders: ['*'],
+  preflightMaxAge: 5, //Optional
+  origins: ['http://localhost:*'],
+  allowHeaders: ['API-Token', 'Authorization'],
+  exposeHeaders: ['API-Token-Expiry']
 })
 
 server.pre(cors.preflight)
 server.use(cors.actual)
-
 server.pre(restify.plugins.fullResponse())
 server.use(restify.plugins.bodyParser())
 server.use(restify.plugins.queryParser())
@@ -132,7 +132,7 @@ server.post('/user/login', (req, res, next) => {
   })
 })
 
-server.get('/user/validate/', (req, res, next) => {
+server.get('/user/validate', (req, res, next) => {
   let user = req.user
   User.findOne({ _id: user._id}, (error, doc) => {
     if (error) {
@@ -151,6 +151,34 @@ server.get('/user/validate/', (req, res, next) => {
 
   return next()
 })
+
+server.get('/user/token/validate', (request, response, next) => {
+  let token = request.query.pass_token
+  let currDate = moment().unix()
+
+  User.findOne({ passResetToken: token }, (error, result) => {
+    if (error) {
+      return next(new errors.InternalServerError(error))
+    }
+
+    console.log(result)
+    if (result) {
+      let resetRequestTime = moment(result.passResetDate).unix()
+      let secondsAgo = currDate - resetRequestTime
+      let minutesAgo = Math.floor(secondsAgo / 60)
+      let hoursAgo = Math.floor(minutesAgo / 60)
+
+      if (hoursAgo < 25) {
+        response.send({ valid: true, expired: false })
+      } else {
+        response.send({ valid: true, expired: true })
+      }
+    } else {
+      response.send({ valid: false })
+    }
+  })
+})
+
 
 server.on('restifyError', function (req, res, err, cb) {
  // this listener will fire after both events above!
