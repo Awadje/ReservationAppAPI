@@ -1,0 +1,12 @@
+{
+ "apps": [
+   {
+     "name": "UserService",
+     "script": "./UserService/service.js",
+     "watch": ["UserService"],
+     "ignore_watch": [
+       "./UserService/node_modules"
+     ]
+   }
+ ]
+}

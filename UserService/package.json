@@ -1,0 +1,22 @@
+{
+  "name": "userservice",
+  "version": "1.0.0",
+  "description": "Service responsible for users",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "M. Awad",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^2.0.1",
+    "jsonwebtoken": "^8.2.1",
+    "moment": "^2.22.1",
+    "mongoose": "^5.0.15",
+    "nodemailer": "^4.6.4",
+    "restify": "^7.1.1",
+    "restify-cors-middleware": "^1.1.0",
+    "restify-errors": "^6.0.0",
+    "restify-jwt-community": "^1.0.4"
+  }
+}
