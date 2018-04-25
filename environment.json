@@ -7,6 +7,14 @@
      "ignore_watch": [
        "./UserService/node_modules"
      ]
-   }
+   },
+   {
+    "name": "ReservationService",
+    "script": "./ReservationService/service.js",
+    "watch": ["ReservationService"],
+    "ignore_watch": [
+      "./ReservationService/node_modules"
+    ]
+  }
  ]
 }
