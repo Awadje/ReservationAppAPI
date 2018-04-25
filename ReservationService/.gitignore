@@ -1,7 +1,7 @@
 files/*
-**/node_modules/
-**/.npm/
-**/.config/
-**/.data/
+/node_modules/
+/.npm/
+/.config/
+/.data/
 npm-debug
 .DS_Store
