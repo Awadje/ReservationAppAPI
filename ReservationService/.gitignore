@@ -1,6 +1,6 @@
 files/*
-node_modules/
-.npm/
+**/node_modules/
+**/.npm/
 **/.config/
 **/.data/
 npm-debug
