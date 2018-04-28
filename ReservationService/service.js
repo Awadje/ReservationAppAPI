@@ -42,11 +42,12 @@ server.post('/slot/create', (request, response, next) => {
   let settings = request.body
   console.log(request.body)
  
-  Slot.findOne({ slot_time: request.body.slot_time, slot_date: request.body.slot_date}, (error, result) => {
+  Slot.find({ slot_time: request.body.slot_time, slot_date: request.body.slot_date}, (error, result) => {
     if (error) {
       return next(new errors.InternalServerError(error))
     }
-    if (!result) {
+    console.log(result)
+    if (result.length == 0) {
       Slot.create(settings, (error, doc) => {
         if (error) {
           return next(new errors.BadRequestError(error))
@@ -92,12 +93,18 @@ server.post('/reservation/create', (request, response, next) => {
    return next(new errors.BadRequestError('Veld mobiel is niet ingevuld'))
  }
 
- Reservation.findOne({ phone: request.body.phone}, (error, result) => {
-   if (error) {
+ Reservation.find({ 
+   phone: request.body.phone, 
+   reservation: request.body.reservation, 
+   slot_date: request.body.slot.slot_date,
+   slot_time: request.body.slot.slot_time 
+  }, (error, result) => {
+  console.log(request.body.slot.slot_date)
+  if (error) {
+    console.log(error)
      return next(new errors.InternalServerError(error))
    }
-
-   if (!result) {
+   if (result.length == 0) {
      Reservation.create(settings, (error, doc) => {
        if (error) {
          return next(new errors.BadRequestError(error))

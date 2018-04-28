@@ -13,12 +13,10 @@ module.exports = mongoose => {
    email: {
      type: String,
      required: true,
-     unique: true
    },
    phone: {
     type: Number,
     required: true,
-    unique: true
   },
   reservation: {
     type: String,
