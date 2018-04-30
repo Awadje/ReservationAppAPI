@@ -36,7 +36,7 @@ server.use(restify.plugins.bodyParser())
 server.use(jwtRestify({ secret: JWT_SECRET }))
 
 
-const Slot = require('./TableSchema')(mongoose)
+const Table = require('./TableSchema')(mongoose)
 
 server.post('/table/create', (request, response, next) => {
   let settings = request.body
