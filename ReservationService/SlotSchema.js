@@ -1,6 +1,10 @@
 module.exports = mongoose => {
  const SlotSchema = new mongoose.Schema({
-  slot_id: {
+  slot_start: {
+    type: Number,
+    required: false
+  },
+  slot_end: {
     type: Number,
     required: false
   },

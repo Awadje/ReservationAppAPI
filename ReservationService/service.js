@@ -42,23 +42,35 @@ server.post('/slot/create', (request, response, next) => {
   let settings = request.body
   console.log(request.body)
  
-  Slot.find({ slot_time: request.body.slot_time, slot_date: request.body.slot_date}, (error, result) => {
+  Slot.find({ slot_date: request.body.slot_date }, (error, results) => {
     if (error) {
       return next(new errors.InternalServerError(error))
     }
-    console.log(result)
-    if (result.length == 0) {
+    console.log(`Slot Result: ${results}`)
+ 
+    let available
+    results.forEach(function(result) {
+      if (result.slot_end >= request.body.slot_start  && result.slot_start <= request.body.slot_end) {
+        console.log(`Request start: ${request.body.slot_start}`)
+        console.log(`Slot end: ${result.slot_end}`)
+        console.log(`Slot start: ${result.slot_start}`)
+        console.log(`Request end: ${request.body.slot_end}`)     
+        available = false
+      } 
+    })
+
+    if (available != false)  {
       Slot.create(settings, (error, doc) => {
         if (error) {
           return next(new errors.BadRequestError(error))
-          console.log(errror)
+          console.log(error)
         }
         response.send(doc)
-        console.log(doc)
+        console.log(`Saved Slot: ${doc}`)
         return next()
       })
     } else {
-      return next(new errors.ConflictError(`Dit tijdstip is bezet ${request.body.slot_time}`))
+      return next(new errors.ConflictError(`Dit slot is bezet ${request.body.slot_start}`))
     }
   })
  })
@@ -88,7 +100,6 @@ server.get('/reservation/list', (req, res, next) => {
 
 server.post('/reservation/create', (request, response, next) => {
  let settings = request.body
- console.log(request.body)
  if (!request.body.phone || request.body.phone.length < 1) {
    return next(new errors.BadRequestError('Veld mobiel is niet ingevuld'))
  }
@@ -96,10 +107,8 @@ server.post('/reservation/create', (request, response, next) => {
  Reservation.find({ 
    phone: request.body.phone, 
    reservation: request.body.reservation, 
-   slot_date: request.body.slot.slot_date,
-   slot_time: request.body.slot.slot_time 
+   slot_date: request.body.slot_date,
   }, (error, result) => {
-  console.log(request.body.slot.slot_date)
   if (error) {
     console.log(error)
      return next(new errors.InternalServerError(error))
@@ -108,12 +117,13 @@ server.post('/reservation/create', (request, response, next) => {
      Reservation.create(settings, (error, doc) => {
        if (error) {
          return next(new errors.BadRequestError(error))
-         console.log(errror)
+         console.log(error)
        }
+       console.log(`Saved Reservation: ${doc}`)
        response.send(doc)
-       console.log(doc)
        return next()
      })
+  
    } else {
      return next(new errors.ConflictError(`Reservering met op nummer ${request.body.phone} is al gemaakt vandaag`))
    }
