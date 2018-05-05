@@ -2,31 +2,31 @@ module.exports = mongoose => {
  const TableSchema = new mongoose.Schema({
    id: {
      type: String,
-     required: false
+     required: true
    },
    name: {
      type: String,
-     required: false
+     required: true
    },
    location: {
      type: String,
-     required: false,
+     required: true,
    },
    properties: {
     type: Number,
-    required: false,
+    required: true,
   },
   size: {
     type: Number,
-    required: false
+    required: true
   },
   available: {
     type: Boolean,
-    required: false,
+    required: true,
   },
   flex: {
     type: Number,
-    required: false,
+    required: true,
   }
  },
  {

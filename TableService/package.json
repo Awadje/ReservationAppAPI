@@ -9,10 +9,22 @@
   "author": "Michael Awad",
   "license": "ISC",
   "dependencies": {
-    "mongoose": "^5.0.16",
+    "@feathersjs/authentication": "^2.1.5",
+    "@feathersjs/authentication-jwt": "^2.0.1",
+    "@feathersjs/express": "^1.2.2",
+    "@feathersjs/feathers": "^3.1.5",
+    "@feathersjs/socketio": "^3.2.1",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "feathers": "^2.2.4",
+    "feathers-mongodb": "^3.1.0",
+    "feathers-mongoose": "^6.1.1",
+    "feathers-rest": "^1.8.1",
+    "mongoose": "^5.0.17",
     "restify": "^7.1.1",
     "restify-cors-middleware": "^1.1.0",
     "restify-errors": "^6.0.0",
-    "restify-jwt-community": "^1.0.4"
+    "restify-jwt-community": "^1.0.4",
+    "socketio": "^1.0.0"
   }
 }
