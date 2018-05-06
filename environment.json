@@ -15,6 +15,14 @@
     "ignore_watch": [
       "./ReservationService/node_modules"
     ]
+  },
+  {
+    "name": "TableService",
+    "script": "./TableService/service.js",
+    "watch": ["TableService"],
+    "ignore_watch": [
+      "./TableService/node_modules"
+    ]
   }
  ]
 }
