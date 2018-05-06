@@ -95,6 +95,40 @@ User.count({}, (error, count) => {
   }
 }) 
 
+server.post('/user/create', (request, response, next) => {
+  let newUser = request.body
+  
+    User.findOne({ $or: [ { email: newUser.email }, { mobile: newUser.mobile }] }, (error, result) => {
+      if (error) {
+        return next(new errors.InternalServerError(error))
+      }
+  
+      if (!result) {
+        bcrypt.hash( request.body.password, 10).then(hash => {
+          doc = {
+            firstname: request.body.firstname,
+            lastname: request.body.lastname,
+            email: request.body.email,
+            mobile: request.body.mobile,
+            password: hash,
+            role: 'admin',
+          }
+        
+      
+        User.create(doc, (error, doc) => {
+            if (!error) {
+              response.send({ created: 'OK', userId: doc._id })
+            } else {
+              return next(new errors.InternalServerError(error))
+            }
+            })  
+          })
+      } else {
+        return next(new errors.ConflictError(`Gebruiker met email: ${newUser.email} of mobile nr: ${newUser.mobile} bestaat al!`))
+      }
+    })  
+})
+
 server.get('/user/list', (request, response, next) => {
  User.find({ role: 'Employee' }, { password: 0 }, (error, docs) => {
    if (error) {
