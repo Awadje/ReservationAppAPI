@@ -63,6 +63,16 @@ server.post('/table/create', (request, response, next) => {
   })
  })
 
+ server.put('/table/edit/', (req, res, next) => {
+  let table = req.body
+    Table.update({ _id: table._id }, { $set: table }, 
+    (error, doc) => {
+      if (error) {
+        return next(new errors.InternalServerError(error))
+    }
+    res.send('Table Updated')
+  })
+})
 
 server.get('/table/list', (req, res, next) => {
  Table.find({ }, (error, docs) => {
@@ -74,6 +84,50 @@ server.get('/table/list', (req, res, next) => {
  })
 })
 
+server.get('/table/edit/:id', (request, response, next) => {
+  let id = request.params.id
+  console.log(request.params)
+  Table.find({ _id: id }, (error, docs) => {
+    if (error) {
+      return next(new errors.InternalServerError(error))
+    }
+    console.log(docs)
+    response.send(docs)
+    return next()
+  })
+})
+
+server.put('/table/deactivate/:table', (req, res, next) => {
+  let table = req.params.table
+  Table.update({ _id: table }, { active: false }, (error, doc) => {
+    if (error) {
+      return next(new errors.InternalServerError(error))
+    }
+    res.send({ active: false, user: req.user })
+  })
+})
+
+server.put('/table/activate/:table', (req, res, next) => {
+  let table = req.params.table
+  Table.update({ _id: table }, { active: true }, (error, doc) => {
+    if (error) {
+      return next(new errors.InternalServerError(error))
+    }
+    res.send({ active: false, user: req.user })
+  })
+})
+
+server.del('/table/:table', (req, response, next) => {
+  let table = req.params.table
+  Table.remove({ _id: table}, (error, result) => {
+    if (error) {
+      return next(new errors.InternalServerError(error))
+    }
+
+    response.send({ deleted_target_count: String(result) })
+    next()
+  })
+})
 
 server.on('restifyError', function (req, res, err, cb) {
   // this listener will fire after both events above!

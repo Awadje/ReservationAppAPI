@@ -24,6 +24,10 @@ module.exports = mongoose => {
     type: Boolean,
     required: false,
   },
+  active: {
+    type: Boolean,
+    required: false,
+  },
   flex: {
     type: Number,
     required: false,
