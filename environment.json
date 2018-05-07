@@ -17,11 +17,11 @@
     ]
   },
   {
-    "name": "RealtimeTableService",
-    "script": "./RealtimeTableService/service.js",
-    "watch": ["RealtimeTableService"],
+    "name": "TableService",
+    "script": "./TableService/service.js",
+    "watch": ["TableService"],
     "ignore_watch": [
-      "./RealtimeTableService/node_modules"
+      "./TableService/node_modules"
     ]
   }
  ]
