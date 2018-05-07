@@ -4,6 +4,7 @@ const socketio = require('@feathersjs/socketio');
 
 const MongoClient = require('mongodb').MongoClient;
 const service = require('feathers-mongodb');
+const { BadRequest } = require('@feathersjs/errors');
 
 const Model = require('./TableSchema');
 
