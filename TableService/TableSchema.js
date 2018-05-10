@@ -31,7 +31,23 @@ module.exports = mongoose => {
   flex: {
     type: Number,
     required: false,
-  }
+  },
+  slot_start: {
+    type: Number,
+    required: false
+  },
+  slot_end: {
+    type: Number,
+    required: false
+  },
+  slot_time: {
+     type: String,
+     required: false
+   },
+   slot_date: {
+     type: String,
+     required: false
+   },
  },
  {
    timestamps: true

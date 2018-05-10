@@ -129,6 +129,54 @@ server.del('/table/:table', (req, response, next) => {
   })
 })
 
+server.post('/slot/create', (request, response, next) => {
+  let settings = request.body
+  console.log(request.body)
+ 
+  Table.find({ slot_date: request.body.slot_date }, (error, results) => {
+    if (error) {
+      return next(new errors.InternalServerError(error))
+    }
+    console.log(`Slot Result: ${results}`)
+ 
+    let available
+    results.forEach(function(result) {
+      if (result.slot_end >= request.body.slot_start  && result.slot_start <= request.body.slot_end) {
+        console.log(`Request start: ${request.body.slot_start}`)
+        console.log(`Slot end: ${result.slot_end}`)
+        console.log(`Slot start: ${result.slot_start}`)
+        console.log(`Request end: ${request.body.slot_end}`)     
+        available = false
+      } 
+    })
+
+    if (available != false)  {
+      Table.create(settings, (error, doc) => {
+        if (error) {
+          return next(new errors.BadRequestError(error))
+          console.log(error)
+        }
+        response.send(doc)
+        console.log(`Saved Slot: ${doc}`)
+        return next()
+      })
+    } else {
+      return next(new errors.ConflictError(`Dit slot is bezet ${request.body.slot_start}`))
+    }
+  })
+ })
+
+
+server.get('/table/slots', (req, res, next) => {
+ Table.find({ }, (error, docs) => {
+   if (error) {
+     return next(new errors.InternalServerError(error))
+   }
+   res.send(docs)
+   return next()
+ })
+})
+
 server.on('restifyError', function (req, res, err, cb) {
   // this listener will fire after both events above!
   // `err` here is the same as the error that was passed to the above
