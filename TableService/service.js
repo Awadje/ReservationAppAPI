@@ -114,16 +114,13 @@ app.service('slots').hooks({
         console.log('SLOTS: before create')
         console.log(context.data)
 
-        return new Promise((resolve, reject) => {
-          Slot.find({ slot_date: contex.data.slot_date }, (error, results) => {
-            if (error) {
-              return reject(error);
-            }
-            console.log(`Slot Result: ${results}`)
+         const slotDate = context.data.slot_date;
 
-            resolve(context)
+          return context.app.service('slots').find({slotDate}).then(slot => {
+            context.data.slot = slot
+                console.log(`Slot Result: ${context.data.slot}`)
+            return context
         })
-      })
     }
 
     ],
