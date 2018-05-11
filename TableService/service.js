@@ -41,7 +41,7 @@ const Table = require('./TableSchema')(mongoose)
 server.post('/table/create', (request, response, next) => {
   let settings = request.body
   console.log(request.body)
- 
+
   Table.find({ name: request.body.name}, (error, result) => {
     if (error) {
       return next(new errors.InternalServerError(error))
@@ -65,7 +65,7 @@ server.post('/table/create', (request, response, next) => {
 
  server.put('/table/edit/', (req, res, next) => {
   let table = req.body
-    Table.update({ _id: table._id }, { $set: table }, 
+    Table.update({ _id: table._id }, { $set: table },
     (error, doc) => {
       if (error) {
         return next(new errors.InternalServerError(error))
@@ -83,6 +83,19 @@ server.get('/table/list', (req, res, next) => {
    return next()
  })
 })
+
+server.get('/table/available', (req, res, next) => {
+ Table.find({ }, (error, docs) => {
+   if (error) {
+     return next(new errors.InternalServerError(error))
+   }
+   res.send(docs)
+   return next()
+ })
+})
+
+
+
 
 server.get('/table/edit/:id', (request, response, next) => {
   let id = request.params.id
@@ -129,6 +142,58 @@ server.del('/table/:table', (req, response, next) => {
   })
 })
 
+const Slot = require('./SlotSchema')(mongoose)
+
+server.post('/slot/create', (request, response, next) => {
+  let settings = request.body
+  console.log(request.body)
+
+  Slot.find({ slot_date: request.body.slot_date }, (error, results) => {
+    if (error) {
+      return next(new errors.InternalServerError(error))
+    }
+    console.log(`Slot Result: ${results}`)
+
+    let available
+    results.forEach(function(result) {
+      if (result.slot_end >= request.body.slot_start  && result.slot_start <= request.body.slot_end) {
+        console.log(`Request start: ${request.body.slot_start}`)
+        console.log(`Slot end: ${result.slot_end}`)
+        console.log(`Slot start: ${result.slot_start}`)
+        console.log(`Request end: ${request.body.slot_end}`)
+        available = false
+      }
+    })
+
+    if (available != false)  {
+      Slot.create(settings, (error, doc) => {
+        if (error) {
+          return next(new errors.BadRequestError(error))
+          console.log(error)
+        }
+        response.send(doc)
+        console.log(`Saved Slot: ${doc}`)
+        console.log(doc.table.slots.length)
+        return next()
+      })
+    } else {
+      return next(new errors.ConflictError(`Dit slot is bezet ${request.body.slot_start}`))
+    }
+  })
+ })
+
+
+server.get('/reservation/slots', (req, res, next) => {
+ Slot.find({ }, (error, docs) => {
+   if (error) {
+     return next(new errors.InternalServerError(error))
+   }
+   res.send(docs)
+   return next()
+ })
+})
+
+
 server.on('restifyError', function (req, res, err, cb) {
   // this listener will fire after both events above!
   // `err` here is the same as the error that was passed to the above
@@ -145,7 +210,7 @@ server.on('restifyError', function (req, res, err, cb) {
   return cb()
 })
 
- 
+
 server.listen(3002, () => {
   console.info(`${server.name} is listening at ${server.url}`)
 })
