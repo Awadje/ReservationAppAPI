@@ -133,26 +133,25 @@ const Slot = require('./SlotSchema')(mongoose)
 
 server.put('/slot/create', (request, response, next) => {
   let settings = request.body
-  console.log(request.body)
 
-  Table.find({ slot_date: request.body.slot_date }, (error, results) => {
+  Table.find({ id: settings.slots[0].table_id, "slots.slot_date": settings.slots[0].slot_date }, (error, results) => {
     if (error) {
       return next(new errors.InternalServerError(error))
     }
-    console.log(`Slot Result: ${results}`)
+    console.log(`These are the date results: ${results}`)
 
     let available
     results.forEach(function(result) {
       console.log('Am I running?')
-      console.log(result.slots)
       result.slots.forEach(function(slot) {
-        console.log(settings.slots[0].slot_end)
-        console.log(slot.slot_end)
-        if (slot.slot_end >= settings.slots[0].slot_start  && slot.slot_start <= settings.slots[0].slot_end) {
-          console.log(`Request start: ${request.body.slot_start}`)
+        console.log(slot.phone)
+        if ( slot.slot_end >= settings.slots[0].slot_start  && slot.slot_start <= settings.slots[0].slot_end) {
+          console.log(`Request start: ${settings.slots[0].slot_start}`)
           console.log(`Slot end: ${slot.slot_end}`)
           console.log(`Slot start: ${slot.slot_start}`)
-          console.log(`Request end: ${request.body.slot_end}`)
+          console.log(`Request end: ${settings.slots[0].slot_end}`)
+          console.log(`Request end: ${settings.slots[0].phone}`)
+
           available = false
         }
         else {
@@ -162,9 +161,10 @@ server.put('/slot/create', (request, response, next) => {
     })
 
     console.log(available)
+    console.log(settings.slots[0].table_id)
 
     if (available != false)  {
-      Table.update({ id: settings.table_id }, { $push: settings }, (error, doc) => {
+      Table.update({ id: settings.slots[0].table_id }, { $push: settings }, (error, doc) => {
         if (error) {
           return next(new errors.BadRequestError(error))
           console.log(error)

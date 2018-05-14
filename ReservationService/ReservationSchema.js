@@ -20,6 +20,10 @@ module.exports = mongoose => {
     type: String,
     required: false
   },
+  table_id: {
+    type: String,
+    required: false
+  },
    created_at: {
     type: Date,
     required: false

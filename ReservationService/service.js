@@ -55,7 +55,6 @@ server.post('/reservation/create', (request, response, next) => {
 
  Reservation.find({
    phone: request.body.phone,
-   reservation: request.body.reservation,
    slot_date: request.body.slot_date,
   }, (error, result) => {
   if (error) {

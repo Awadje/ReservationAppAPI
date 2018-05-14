@@ -52,6 +52,10 @@ module.exports = mongoose => {
          type: String,
          required: false
        },
+       phone: {
+         type: Number,
+         required: false
+       },
        created_at: {
          type: String,
          required: true,
