@@ -1,3 +1,4 @@
+const Slot = require('./SlotSchema')
 
 module.exports = mongoose => {
  const TableSchema = new mongoose.Schema({
@@ -29,6 +30,34 @@ module.exports = mongoose => {
     type: Boolean,
     required: false,
   },
+  slots: [
+    {
+      table_id: {
+        type: String,
+        required: false
+      },
+      slot_start: {
+        type: Number,
+        required: false
+      },
+      slot_end: {
+        type: Number,
+        required: false
+      },
+      slot_time: {
+         type: String,
+         required: false
+       },
+       slot_date: {
+         type: String,
+         required: false
+       },
+       created_at: {
+         type: String,
+         required: true,
+       }
+     }
+   ],
   flex: {
     type: Number,
     required: false,

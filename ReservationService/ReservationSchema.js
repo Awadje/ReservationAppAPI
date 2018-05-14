@@ -1,5 +1,3 @@
-const Slot = require('./SlotSchema')
-
 module.exports = mongoose => {
  const ReservationSchema = new mongoose.Schema({
    id: {
@@ -22,11 +20,6 @@ module.exports = mongoose => {
     type: String,
     required: false
   },
-   slots: {
-     type: Object,
-     ref: Slot,
-     required: false
-   },
    created_at: {
     type: Date,
     required: false

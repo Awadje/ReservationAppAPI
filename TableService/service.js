@@ -129,6 +129,68 @@ server.del('/table/:table', (req, response, next) => {
   })
 })
 
+const Slot = require('./SlotSchema')(mongoose)
+
+server.put('/slot/create', (request, response, next) => {
+  let settings = request.body
+  console.log(request.body)
+
+  Table.find({ slot_date: request.body.slot_date }, (error, results) => {
+    if (error) {
+      return next(new errors.InternalServerError(error))
+    }
+    console.log(`Slot Result: ${results}`)
+
+    let available
+    results.forEach(function(result) {
+      console.log('Am I running?')
+      console.log(result.slots)
+      result.slots.forEach(function(slot) {
+        console.log(settings.slots[0].slot_end)
+        console.log(slot.slot_end)
+        if (slot.slot_end >= settings.slots[0].slot_start  && slot.slot_start <= settings.slots[0].slot_end) {
+          console.log(`Request start: ${request.body.slot_start}`)
+          console.log(`Slot end: ${slot.slot_end}`)
+          console.log(`Slot start: ${slot.slot_start}`)
+          console.log(`Request end: ${request.body.slot_end}`)
+          available = false
+        }
+        else {
+          available = true
+        }
+      })
+    })
+
+    console.log(available)
+
+    if (available != false)  {
+      Table.update({ id: settings.table_id }, { $push: settings }, (error, doc) => {
+        if (error) {
+          return next(new errors.BadRequestError(error))
+          console.log(error)
+        }
+        response.send(doc)
+        console.log(`Saved Slot`)
+        return next()
+      })
+    } else {
+      console.log(error)
+      return next(new errors.ConflictError(`Dit slot is bezet ${settings.slots[0].slot_start}`))
+    }
+  })
+ })
+
+
+server.get('/reservation/slots', (req, res, next) => {
+ Slot.find({ }, (error, docs) => {
+   if (error) {
+     return next(new errors.InternalServerError(error))
+   }
+   res.send(docs)
+   return next()
+ })
+})
+
 server.on('restifyError', function (req, res, err, cb) {
   // this listener will fire after both events above!
   // `err` here is the same as the error that was passed to the above
