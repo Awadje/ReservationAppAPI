@@ -132,64 +132,50 @@ server.del('/table/:table', (req, response, next) => {
 const Slot = require('./SlotSchema')(mongoose)
 
 server.put('/slot/create', (request, response, next) => {
-  let settings = request.body
+  let newSlot = request.body.slots[0]
 
-  Table.find({ id: settings.slots[0].table_id, "slots.slot_date": settings.slots[0].slot_date }, (error, results) => {
+  Table.find({ _id: newSlot.table_id, "slots.slot_date": newSlot.slot_date }, (error, results) => {
     if (error) {
       return next(new errors.InternalServerError(error))
     }
-    console.log(`These are the date results: ${results}`)
 
     let available
-    results.forEach(function(result) {
-      console.log('Am I running?')
-      result.slots.forEach(function(slot) {
-        console.log(slot.phone)
-        if ( slot.slot_end >= settings.slots[0].slot_start  && slot.slot_start <= settings.slots[0].slot_end) {
-          console.log(`Request start: ${settings.slots[0].slot_start}`)
-          console.log(`Slot end: ${slot.slot_end}`)
-          console.log(`Slot start: ${slot.slot_start}`)
-          console.log(`Request end: ${settings.slots[0].slot_end}`)
-          console.log(`Request end: ${settings.slots[0].phone}`)
 
+    for(var result of results) {
+      for(var slot of result.slots) {
+        // console.log(`true or false? ${ slot.slot_end >= newSlot.slot_start  && slot.slot_start <= newSlot.slot_end}`)
+        // console.log(`${slot.slot_end} is bigger than ${newSlot.slot_start} and ${slot.slot_start} is smaller than ${newSlot.slot_end}`)
+        // console.log(`Phone numbers match: ${slot.phone == newSlot.phone }`)
+        if (slot.phone == newSlot.phone) {
+         console.log('Am I true? Phone')
+         available = false
+       } else if (slot.slot_end >= newSlot.slot_start  && slot.slot_start <= newSlot.slot_end) {
+         console.log('Am I true? Number ')
           available = false
-        }
-        else {
-          available = true
-        }
-      })
-    })
+       } else {
+         available = true
+       }
+      }
+    }
 
-    console.log(available)
-    console.log(settings.slots[0].table_id)
+    console.log(`Available? ${available}`)
 
-    if (available != false)  {
-      Table.update({ id: settings.slots[0].table_id }, { $push: settings }, (error, doc) => {
+    if (available == true)  {
+      Table.update({ _id: newSlot.table_id }, { $push: { slots: newSlot } }, (error, doc) => {
         if (error) {
           return next(new errors.BadRequestError(error))
           console.log(error)
         }
         response.send(doc)
         console.log(`Saved Slot`)
-        return next()
       })
     } else {
       console.log(error)
-      return next(new errors.ConflictError(`Dit slot is bezet ${settings.slots[0].slot_start}`))
+      return next(new errors.ConflictError(`Dit slot is bezet ${newSlot.slot_start} en/of nummer: ${newSlot.phone} heeft al gereserveerd vandaag `))
     }
   })
- })
-
-
-server.get('/reservation/slots', (req, res, next) => {
- Slot.find({ }, (error, docs) => {
-   if (error) {
-     return next(new errors.InternalServerError(error))
-   }
-   res.send(docs)
-   return next()
- })
 })
+
 
 server.on('restifyError', function (req, res, err, cb) {
   // this listener will fire after both events above!
